@@ -24,7 +24,7 @@ CUDA_VISIBLE_DEVICES=<number of card> python3 train.py --img 415 --batch 16 --da
 ```
 ## For inference
 ```
-CUDA_VISIBLE_DEVICES=<number of card> python3 detect.py --source "dataset/images/val/<00879.jpg>change to existing" --weights yolov5/runs/train/<exp3>change to existing/weights/best.pt --data dataset/dataset.yaml
+CUDA_VISIBLE_DEVICES=<number of card> python3 detect.py --source <change to existing mp4 video or photo>" --weights yolov5/runs/train/<exp3>change to existing/weights/best.pt --data dataset/dataset.yaml
 ```
 
 You can find a separate use case for the finished model in the directory `notebook`
