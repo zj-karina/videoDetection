@@ -1,55 +1,45 @@
-import os
-os.environ['CURL_CA_BUNDLE'] = ''
+from argparse import ArgumentParser
 import torch
 import gradio as gr
-import cv2
-
-RETURN_FREQ = 10
-
-model = torch.hub.load("ultralytics/yolov5", "yolov5s")
+from video_processing import VideoProcessor
 
 
-def process_video(input_video):
-    cap = cv2.VideoCapture(input_video)
 
-    output_path = "output.mp4"
 
-    fps = int(cap.get(cv2.CAP_PROP_FPS))
-    width  = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
-    height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+def run_demo(example_path, process_video):
+    with gr.Blocks() as demo:
+        with gr.Row():
+            input_video = gr.Video(label="input")
+            processed_frames = gr.Image(label="last frame")
+            output_video = gr.Video(label="output")
 
-    video = cv2.VideoWriter(output_path, cv2.VideoWriter_fourcc(*"mp4v"), fps, (width, height))
+        with gr.Row():
+            examples = gr.Examples([example_path], inputs=input_video)
+            process_video_btn = gr.Button("process video")
 
-    iterating, frame = cap.read()
-    i = 0
-    while iterating:
-        
-        # flip frame vertically
-        result = model(frame)
-        display_frame =  result.render()[0] 
+        process_video_btn.click(process_video, input_video, [processed_frames, output_video])
 
-        video.write(frame)
-        if i % RETURN_FREQ == RETURN_FREQ -1:
-            yield display_frame, None
-        i += 1
-        
+    demo.queue()
+    demo.launch()
 
-        iterating, frame = cap.read()
 
-    video.release()
-    yield display_frame, output_path
 
-with gr.Blocks() as demo:
-    with gr.Row():
-        input_video = gr.Video(label="input")
-        processed_frames = gr.Image(label="last frame")
-        output_video = gr.Video(label="output")
+if __name__ == '__main__':
+    parser = ArgumentParser()
+    parser.add_argument("--checkpoint_path", type=str, default="./checkpoints/yolov5s.pt")
+    parser.add_argument("--example_path", type=str, default="./examples/test_vid.mp4")
+    parser.add_argument("--return_freq", type=int, default=10)
+    args = parser.parse_args()
+    
+    checkpoint_path = args.checkpoint_path
+    example_path = args.example_path
+    return_freq = args.return_freq
+    
+    
+    model = torch.hub.load('./yolov5', 'custom', path=checkpoint_path, source='local', force_reload=True) 
+    processor = VideoProcessor(model=model, 
+                               return_freq=return_freq)
 
-    with gr.Row():
-        examples = gr.Examples(["/home/maksim/Videos/test_cut.mp4"], inputs=input_video)
-        process_video_btn = gr.Button("process video")
-
-    process_video_btn.click(process_video, input_video, [processed_frames, output_video])
-
-demo.queue()
-demo.launch()
+    
+    run_demo(example_path=example_path,
+             process_video=processor.process_video)

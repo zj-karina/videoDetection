@@ -2,7 +2,7 @@
 
 ## Start with...
 ```
-git clone https://github.com/zj-karina/videoDetection.git
+git clone --recurse-submodules https://github.com/zj-karina/videoDetection.git
 ```
 Put your `kaggle.json` in repository
 
