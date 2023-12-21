@@ -9,9 +9,9 @@ Put your `kaggle.json` in repository
 ## Libraries
 Download all necessary libraries to start the project
 ```
+pip install -r requirements.txt
 cd yolov5
 pip install -r requirements.txt
-pip install googledrivedownloader
 ```
 ## Data preparation
 Prepare data before training
