@@ -10,6 +10,7 @@
 ### Тестирование проводилось на
 - Nvidia Tesla V100-SXM2 (16GB)
 - Intel Xeon E5-2680 v3 @ 2.50GHz
+_________________________________
 
 - NVIDIA Tesla T4
 - Intel(R) Xeon(R) CPU @ 2.30GHz   
