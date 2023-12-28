@@ -1,0 +1,5 @@
+train: images/train
+val: images/val
+
+nc: 4
+names: ['speed limit','yield','mandatory','other']
